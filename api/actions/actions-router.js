@@ -3,39 +3,41 @@ const Actions = require("./actions-model")
 
 const router = express.Router()
 
-const { valAction, valActionId } = require("../middleware")
+const { valActionId, valAction } = require("../middleware")
 
-// router.get('/', (req, res, next) => {
-
-// });
-
-router.get('/:id', valActionId, (req, res) => {
-  Actions.get(req.params.id)
+router.get('/', (req, res, next) => {
+  Actions.get()
     .then(actions => {
-      res.status(actions)
+      if (!actions) {
+        res.status(404).json({ errorMessage: "Could not retrieve actions." })
+      } else {
+        res.status(200).json(actions)
+      }
     })
-    .catch(err => {
-      res.status(500).json({ 
-        error: "The was a problem communicating with the server",
-        message: err.message,
-        stack: err.stack
-      })
-    })
+    .catch(next)
 });
 
-router.post('/', valAction, (req, res) => {
-  Actions.insert(req.body)
-    .then(newAction => {
-      res.status(201).json(newAction)
+router.get('/:id', valActionId, (req, res, next) => {
+  Actions.get(req.params.id)
+    .then(action => {
+      res.status(200).json(action)
     })
-    .catch(err => {
-      res.status(500).json({ 
-        error: "The was a problem communicating with the server",
-        message: err.message,
-        stack: err.stack
-      })
-    })
+    .catch(next)
 });
+
+// router.post('/', valAction, (req, res) => {
+//   Actions.insert(req.body)
+//     .then(newAction => {
+//       res.status(201).json(newAction)
+//     })
+//     .catch(err => {
+//       res.status(500).json({ 
+//         error: "The was a problem communicating with the server",
+//         message: err.message,
+//         stack: err.stack
+//       })
+//     })
+// });
 
 // router.put('/', (req, res, next) => {
 
@@ -44,5 +46,13 @@ router.post('/', valAction, (req, res) => {
 // router.delete('/', (req, res, next) => {
 
 // });
+
+router.use((error, req, res, next) => {
+  res.status(500).json({ 
+    error: "There was a problem communicating with the server.",
+    message: error.message,
+    stack: error.stack
+  })
+})
 
 module.exports = router
