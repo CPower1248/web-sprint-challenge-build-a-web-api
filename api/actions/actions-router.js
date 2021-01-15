@@ -25,27 +25,34 @@ router.get('/:id', valActionId, (req, res, next) => {
     .catch(next)
 });
 
-// router.post('/', valAction, (req, res) => {
-//   Actions.insert(req.body)
-//     .then(newAction => {
-//       res.status(201).json(newAction)
-//     })
-//     .catch(err => {
-//       res.status(500).json({ 
-//         error: "The was a problem communicating with the server",
-//         message: err.message,
-//         stack: err.stack
-//       })
-//     })
-// });
+// POST working, project_id validation required...
+router.post('/', valAction, (req, res, next) => {
+  const { body } = req
+  Actions.insert(body)
+    .then(newAction => {
+      res.status(200).json(newAction)
+    })
+    .catch(next)
+});
 
-// router.put('/', (req, res, next) => {
+router.put('/:id', valActionId, valAction, (req, res, next) => {
+  const { id } = req.params
+  const { body } = req
+  Actions.update(id, body)
+    .then(updatedAction => {
+      res.status(200).json(updatedAction)
+    })
+    .catch(next)
+});
 
-// });
-
-// router.delete('/', (req, res, next) => {
-
-// });
+router.delete('/:id', valActionId, (req, res, next) => {
+  const { id } = req.params
+  Actions.remove(id)
+    .then(() => {
+      res.status(200).json({ message: `The action with id ${id} has been deleted.` })
+    })
+    .catch(next)
+});
 
 router.use((error, req, res, next) => {
   res.status(500).json({ 

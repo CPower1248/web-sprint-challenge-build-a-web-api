@@ -43,9 +43,10 @@ async function valActionId(req, res, next) {
 
 function valAction(req, res, next) {
   const { body } = req
-  if (!body) {
-    res.status(400).json({ errorMessage: "Missing action body" })
+  if (!body.project_id || !body.description || !body.notes) {
+    res.status(400).json({ errorMessage: "Missing required project_id, description and notes" })
   } else {
+    req.body = body
     next()
   }
 }
