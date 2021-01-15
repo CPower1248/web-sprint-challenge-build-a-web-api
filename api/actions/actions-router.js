@@ -3,7 +3,7 @@ const Actions = require("./actions-model")
 
 const router = express.Router()
 
-const { valActionId, valAction } = require("../middleware")
+const { valProjectId, valActionId, valAction } = require("../middleware")
 
 router.get('/', (req, res, next) => {
   Actions.get()
@@ -25,8 +25,7 @@ router.get('/:id', valActionId, (req, res, next) => {
     .catch(next)
 });
 
-// POST working, project_id validation required...
-router.post('/', valAction, (req, res, next) => {
+router.post('/:id', valProjectId, valAction, (req, res, next) => {
   const { body } = req
   Actions.insert(body)
     .then(newAction => {

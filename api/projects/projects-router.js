@@ -49,6 +49,15 @@ router.delete("/:id", valProjectId, (req, res, next) => {
     })
 })
 
+router.get("/:id/actions", valProjectId, (req, res, next) => {
+  const { id } = req.params
+  Projects.getProjectActions(id)
+    .then(projectActions => {
+      res.status(200).json(projectActions)
+    })
+    .catch(next)
+})
+
 router.use((error, req, res, next) => {
   res.status(500).json({ 
     error: "There was a problem communicating with the server.",
